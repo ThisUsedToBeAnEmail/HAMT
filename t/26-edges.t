@@ -222,7 +222,12 @@ ok(defined $elsewhere, "and a third sits elsewhere ($elsewhere)");
         $m->each(sub { warn $obj });
     }
     is(scalar @seen, 1, 'an object warned inside a walk reaches the hook that was there before');
-    is($seen[0], $obj, 'as the object itself');
+    if ($] >= 5.014) {
+        is($seen[0], $obj, 'as the object itself');
+    }
+    else {
+        like($seen[0], qr/^\Q$obj\E at /, 'as the object stringified with its place, which is what warn did before 5.14');
+    }
 
     my $captured = '';
     {
